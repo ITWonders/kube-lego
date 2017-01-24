@@ -1,6 +1,8 @@
 package kubelego
 
 import (
+	"errors"
+
 	"github.com/jetstack/kube-lego/pkg/ingress"
 	"github.com/jetstack/kube-lego/pkg/kubelego_const"
 
@@ -109,7 +111,9 @@ func (kl *KubeLego) reconfigure(ingressesAll []kubelego.Ingress) error {
 		kl.Log().Error("Error while processing certificate requests: ", strings.Join(errsStr, ", "))
 
 		// request a rerun of reconfigure
-		kl.workQueue.Add(true)
+		// do not rerun as it will hit the limit quickly
+		// kl.workQueue.Add(true)
+		return errors.New(strings.Join(errsStr, ";;"))
 	}
 
 	return nil
